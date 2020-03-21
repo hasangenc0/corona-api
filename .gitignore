@@ -18,3 +18,6 @@
 ### Go Patch ###
 /vendor/
 /Godeps/
+
+/config/*
+!config/.env.{env}.yml
