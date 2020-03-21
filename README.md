@@ -2,5 +2,10 @@
 
 ```
 GET
-/api?country={country}
+/api/country
+```
+
+```
+GET
+/api/country/{country}
 ```
