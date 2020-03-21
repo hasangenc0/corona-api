@@ -21,3 +21,5 @@
 
 /config/*
 !config/.env.{env}.yml
+
+/cmd/**/*.gz
