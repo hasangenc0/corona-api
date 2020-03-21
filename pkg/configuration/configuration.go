@@ -1,13 +1,12 @@
 package configuration
 
 import (
+	"fmt"
 	"github.com/go-yaml/yaml"
-	"io/ioutil"
-	"os"
-	"path"
+	"github.com/hasangenc0/corona/pkg/helpers"
 )
 
-const configFilePath = "config/.env.yaml"
+const configPathTemplate = "config/.env.%s.yaml"
 
 type Config struct {
 	Db struct {
@@ -21,29 +20,15 @@ type Config struct {
 		Port    string `yaml:"port"`
 		Timeout string `yaml:"timeout"`
 	}
-}
 
-func getPath() string {
-	workingDir, err := os.Getwd()
-	if err != nil {
-		panic(err)
+	Api struct {
+		Corona string `yaml:"corona"`
 	}
-
-	return path.Join(workingDir, configFilePath)
 }
 
-func readFile(path string) []byte {
-	content, err := ioutil.ReadFile(path)
-	if err != nil {
-		panic(err)
-	}
-
-	return content
-}
-
-func Read() *Config {
-	filePath := getPath()
-	content := readFile(filePath)
+func Read(env string) *Config {
+	filePath := helpers.GetPath(fmt.Sprintf(configPathTemplate, env))
+	content := helpers.ReadFile(filePath)
 
 	config := &Config{}
 	if err := yaml.Unmarshal(content, config); err != nil {

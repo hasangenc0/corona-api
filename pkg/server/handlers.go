@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/hasangenc0/corona/pkg/corona"
+	"github.com/hasangenc0/corona/pkg/helpers"
 	routing "github.com/qiangxue/fasthttp-routing"
 	"log"
 	"time"
@@ -24,7 +24,7 @@ func (s *Server) countryHandler(c *routing.Context) error {
 	defer cancel()
 
 	country := c.Param("country")
-	result, err := corona.Country(ctx, country)
+	result, err := s.Corona.Country(ctx, country)
 
 	if err != nil {
 		return err
@@ -46,9 +46,10 @@ func (s *Server) allCountriesHandler(c *routing.Context) error {
 	} else {
 		ctx, cancel = context.WithCancel(context.Background())
 	}
+
 	defer cancel()
 
-	result, err := corona.AllCountries(ctx)
+	result, err := s.Corona.AllCountries(ctx)
 
 	if err != nil {
 		return err
@@ -64,7 +65,7 @@ func (s *Server) countryPostHandler(c *routing.Context) error {
 	collection := client.Database("corona").Collection("country")
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 
-	countries, err := corona.AllCountries(ctx)
+	countries, err := s.Corona.AllCountries(ctx)
 	if err != nil {
 		return err
 	}
@@ -79,4 +80,18 @@ func (s *Server) countryPostHandler(c *routing.Context) error {
 	}
 
 	return err
+}
+
+func (s *Server) swagger(c *routing.Context) error {
+	file := c.Param("path")
+
+	if file == "" {
+		file = "/cmd/swagger/index.html"
+	} else {
+		file = fmt.Sprintf("/cmd/swagger/%s", file)
+	}
+
+	path := helpers.GetPath(file)
+	c.SendFile(path)
+	return nil
 }
