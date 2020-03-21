@@ -6,7 +6,10 @@ import (
 	"github.com/hasangenc0/corona/pkg/helpers"
 )
 
-const configPathTemplate = "config/.env.%s.yaml"
+const (
+	configPathTemplate = "config/.env.%s.yaml"
+	defaultEnv         = "development"
+)
 
 type Config struct {
 	Db struct {
@@ -27,6 +30,9 @@ type Config struct {
 }
 
 func Read(env string) *Config {
+	if env == "" {
+		env = defaultEnv
+	}
 	filePath := helpers.GetPath(fmt.Sprintf(configPathTemplate, env))
 	content := helpers.ReadFile(filePath)
 
