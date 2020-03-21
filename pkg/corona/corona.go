@@ -5,21 +5,47 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 type Result struct {
-	Country            string `json:"country"`
-	Cases              int32  `json:"cases"`
-	TodayCases         int32  `json:"todayCases"`
-	Deaths             int32  `json:"deaths"`
-	TodayDeaths        int32  `json:"todayDeaths"`
-	Recovered          int32  `json:"recovered"`
-	Active             int32  `json:"active"`
-	Critical           int32  `json:"critical"`
-	CasesPerOneMillion int32  `json:"casesPerOneMillion"`
+	Country            string `bson:"country" json:"country"`
+	Cases              int32  `bson:"cases" json:"cases"`
+	TodayCases         int32  `bson:"todayCases" json:"todayCases"`
+	Deaths             int32  `bson:"deaths" json:"deaths"`
+	TodayDeaths        int32  `bson:"todayDeaths" json:"todayDeaths"`
+	Recovered          int32  `bson:"recovered" json:"recovered"`
+	Active             int32  `bson:"active" json:"active"`
+	Critical           int32  `bson:"critical" json:"critical"`
+	CasesPerOneMillion int32  `bson:"casesPerOneMillion" json:"casesPerOneMillion"`
+	Date               time.Time
 }
 
-func Search(ctx context.Context, country string) (Result, error) {
+func AllCountries(ctx context.Context) ([]Result, error) {
+	url := fmt.Sprintf("https://corona.lmao.ninja/countries")
+	req, err := http.NewRequest("GET", url, nil)
+	var result []Result
+
+	if err != nil {
+		return result, err
+	}
+
+	err = httpDo(ctx, req, func(resp *http.Response, err error) error {
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+
+		if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+			return err
+		}
+
+		return nil
+	})
+	return result, err
+}
+
+func Country(ctx context.Context, country string) (Result, error) {
 	url := fmt.Sprintf("https://corona.lmao.ninja/countries/%s", country)
 	req, err := http.NewRequest("GET", url, nil)
 	var result Result
