@@ -36,6 +36,9 @@ func (s *Server) Start() {
 	api.Get("/country/<country>", s.countryHandler)
 
 	port := s.Conf.Server.Port
+	if s.Env.Port != "" {
+		port = fmt.Sprintf(":%s", s.Env.Port)
+	}
 	log.Println(fmt.Sprintf("🏃Server started: http://localhost%s/", port))
 	log.Fatal(fasthttp.ListenAndServe(port, router.HandleRequest))
 }

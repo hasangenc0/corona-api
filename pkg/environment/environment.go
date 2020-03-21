@@ -7,6 +7,7 @@ import (
 
 type Environment struct {
 	Env    string `env:"ENV"`
+	Port   string `env:"PORT"`
 	Extras env.EnvSet
 }
 
