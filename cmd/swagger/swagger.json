@@ -26,8 +26,8 @@
     }
   ],
   "schemes":[
-    "http",
-    "https"
+    "https",
+    "http"
   ],
   "paths":{
     "/country/{country}":{
